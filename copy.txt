@@ -1,0 +1,56 @@
+
+  function animation(snake) {
+    console.log(snake);
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //updateSnake
+    snake.head.x++;
+
+    // draw updated snake
+    drawSnake(ctx, snake);
+
+    setTimeout(() => animation(snake), 500);
+    // requestAnimationFrame((timestamp) => animation(snake));
+  }
+
+  function drawSnake(ctx, snake) {
+    drawSnakePart(ctx, snake.cellSize, snake.head);
+  }
+
+  function drawSnakePart(ctx, size, part) {
+    ctx.fillStyle = "#0f0";
+    const startX = part.x * size;
+    const startY = part.y * size;
+    ctx.fillRect(startX, startY, size, size);
+    if (!part.next) return;
+    drawSnakePart(ctx, size, part.next);
+  }
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const cellSize = canvas.width / 12;
+
+    // create snake
+    const snakeLinkedList = new SnakeLinkedList();
+    snakeLinkedList.cellSize = cellSize;
+    for (let i = 0; i < 3; i++) {
+      snakeLinkedList.insert([5, 5]);
+    }
+
+    // store snake in state
+    setSnake(() => snakeLinkedList);
+
+    //initial draw snake
+    drawSnake(ctx, snakeLinkedList);
+
+    //start animation
+    setTimeout(() => animation(snakeLinkedList), 500);
+  }, []);
+
+  console.log(snake);
+
