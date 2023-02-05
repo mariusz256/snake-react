@@ -1,15 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import "./App.css";
-import Canvas from "./components/Canvas";
-import Nokia from "./components/Nokia";
+import Game from "./components/Game";
 
 function App() {
-  return (
-    <div className="App">
-      {/* <Canvas /> */}
-      <Nokia />
-    </div>
-  );
+  return <Game />;
 }
 
 export default App;

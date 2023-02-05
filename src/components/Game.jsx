@@ -1,19 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 import "../App.css";
+import Popup from "./Popup";
 
 const FIELDS_NUMBER = 12;
 
-function Canvas() {
+const INITIAL_SNAKE = [
+  [5, 5],
+  [5, 5],
+  [5, 5],
+];
+
+const INITIAL_DIR = [0, -1];
+
+function Game() {
+  const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const snakeRef = useRef([
-    [5, 5],
-    [5, 5],
-    [5, 5],
-  ]);
+
+  const snakeRef = useRef(INITIAL_SNAKE);
   const canvasRef = useRef(null);
   const dirRef = useRef([0, -1]);
-  const foodRef = useRef([0, 0]);
+  const foodRef = useRef(null);
   const intervalRef = useRef(null);
+
+  function reset() {
+    snakeRef.current = INITIAL_SNAKE;
+    dirRef.current = INITIAL_DIR;
+    foodRef.current = null;
+    setScore(0);
+    setGameOver(false);
+    console.log("reset");
+  }
 
   function draw() {
     const canvas = canvasRef.current;
@@ -22,9 +38,11 @@ function Canvas() {
     canvas.height = canvas.offsetHeight;
     const cellSize = canvas.width / FIELDS_NUMBER;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    //draw snake
     snakeRef.current.forEach((el) => drawSnakePart(ctx, cellSize, el));
 
+    //draw food
+    if (!foodRef.current) createFood(snakeRef.current);
     ctx.fillStyle = "red";
     ctx.fillRect(
       foodRef.current[0] * cellSize,
@@ -36,9 +54,9 @@ function Canvas() {
 
   function drawSnakePart(ctx, cellSize, part) {
     ctx.fillStyle = "#0f0";
-    const startX = part[0] * cellSize;
-    const startY = part[1] * cellSize;
-    ctx.rect(startX, startY, cellSize, cellSize);
+    const x = part[0] * cellSize;
+    const y = part[1] * cellSize;
+    ctx.rect(x, y, cellSize, cellSize);
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
     ctx.fill();
@@ -61,18 +79,15 @@ function Canvas() {
       (field - (field % FIELDS_NUMBER)) / FIELDS_NUMBER,
     ];
 
-    return newFood;
+    foodRef.current = newFood;
+    console.log(foodRef.current);
   }
 
   function gameLoop() {
     if (!canvasRef) return;
-    const eaten = foodCollision();
     const [dx, dy] = [...dirRef.current];
     const copiedSnake = JSON.parse(JSON.stringify(snakeRef.current));
-    if (!eaten) copiedSnake.pop();
-    if (eaten) {
-      foodRef.current = createFood(copiedSnake);
-    }
+    foodCollision(copiedSnake);
     const [x, y] = copiedSnake[0];
     const newHead = [x + dx, y + dy];
     copiedSnake.unshift(newHead);
@@ -97,7 +112,6 @@ function Canvas() {
     if (key === "ArrowRight" && dirRef.current[0] != -1) {
       dirRef.current = [1, 0];
     }
-    // gameLoop();
   }
 
   function checkGameOver(snake) {
@@ -113,15 +127,20 @@ function Canvas() {
     }
   }
 
-  function foodCollision() {
-    return snakeRef.current[0][0] == foodRef.current[0] &&
+  function foodCollision(snake) {
+    if (
+      snakeRef.current[0][0] == foodRef.current[0] &&
       snakeRef.current[0][1] == foodRef.current[1]
-      ? true
-      : false;
+    ) {
+      createFood(snake);
+      setScore((prev) => prev + 1);
+    } else {
+      snake.pop();
+    }
   }
 
-  function snakeCollision(copiedSnake) {
-    const snakeTail = JSON.parse(JSON.stringify(copiedSnake));
+  function snakeCollision(snake) {
+    const snakeTail = JSON.parse(JSON.stringify(snake));
     const snakeHead = snakeTail.shift();
     const collision = snakeTail.some(
       (part) => snakeHead[0] == part[0] && snakeHead[1] == part[1]
@@ -142,7 +161,6 @@ function Canvas() {
 
   useEffect(() => {
     draw();
-    let id;
 
     if (!gameOver) {
       window.addEventListener("keydown", movementsHandler);
@@ -156,9 +174,11 @@ function Canvas() {
 
   return (
     <div className="App">
+      <div className="score">score: {score}</div>
       <canvas ref={canvasRef} className="board"></canvas>
+      {gameOver && <Popup reset={reset} />}
     </div>
   );
 }
 
-export default Canvas;
+export default Game;

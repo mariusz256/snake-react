@@ -1,11 +1,21 @@
 #root {
-  max-width: 1280px;
+  position: relative;
+  width: 100%;
   margin: 0 auto;
+  max-width: 1280px;
   padding: 2rem;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.App {
+.score {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: large;
+  font-weight: bold;
+  padding: 1rem;
 }
 
 .board {
@@ -15,72 +25,32 @@
   display: grid;
 }
 
-.Nokia_sample {
+.popup {
   position: absolute;
-  top: -740px;
-  left: calc(50% + 7px);
-  transform: translateX(-50%);
-  width: 1200px;
-  z-index: 1;
-  opacity: 0.4;
-}
-
-.Nokia {
-  position: relative;
-  height: 735px;
-  width: 320px;
-  background-color: blue;
-  border-radius: 18% 18% 24% 24% / 26% 26% 32% 32%;
-  overflow: hidden;
-}
-
-.main_buttons {
-  position: absolute;
-  top: 8px;
-  height: 480px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  background-color: red;
-  border-radius: 18% 18% 45% 45% / 36% 36% 50% 50%;
-  overflow: hidden;
-}
-.big_button {
-  position: absolute;
-  width: 120px;
-  height: 30px;
-  top: 380px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: black;
-  border-radius: 100%/50% 50% 150% 150%;
+  height: 280px;
+  width: 280px;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: rgb(36, 36, 36, 1);
+  z-index: 1;
+  box-shadow: 1px 1px 20px 1px #7a7a7a;
 }
 
-.big_button::after {
-  position: absolute;
-  top: -3px;
-  content: "";
-  display: block;
-  width: 60px;
-  height: 14px;
-  border: solid 4px white;
-  border-radius: 90%;
-  border-color: transparent transparent white transparent;
+.popup p {
+  padding: 0.5rem;
 }
 
-.c_button {
-  position: absolute;
-  position: absolute;
-  width: 62px;
-  height: 40px;
-  top: 421px;
-  left: 19%;
-  transform: translateX(-50%);
-  background-color: black;
-  rotate: 33deg;
-  border-radius: 20px 10px 10px 20px / 40px 10px 20px 40px;
+.popup button {
+  border: none;
+  width: 50%;
+  padding: 0.5rem;
+  background-color: transparent;
+  border: 2px solid #7a7a7a;
+  border-radius: 5px;
+  text-transform: uppercase;
 }
